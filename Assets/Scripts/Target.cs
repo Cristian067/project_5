@@ -19,7 +19,7 @@ public class Target : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        //Time.timeScale = 0;
         gameManager = FindObjectOfType<GameManager>();
 
         //particleSys = GetComponent<ParticleSystem>();
@@ -36,10 +36,10 @@ public class Target : MonoBehaviour
     private void OnMouseDown()
     {
         //particleSys.Play();
-        Instantiate(particleSys, transform.position, Quaternion.identity);
-        if (!gameManager.IsGameOver())
+        
+        if (!gameManager.IsGameOver() && !gameManager.IsPause())
         {
-            
+            Instantiate(particleSys, transform.position, Quaternion.identity);
             gameManager.UpdatePoints(score);
 
             if (gameObject.tag == "Bad")

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     private int highScore;
 
+    private bool isPause;
+
 
 
 
@@ -43,10 +46,13 @@ public class GameManager : MonoBehaviour
     void Start()
     {
 
+        //Time.timeScale = 0;
+        
+
         highScore = PlayerPrefs.GetInt("highScore");
         Debug.Log(highScore);
         uiManager = FindObjectOfType<UiManager>();
-        
+        uiManager.HidePausePanel();
         uiManager.UpdatePoints(0, highScore);
         
         uiManager.UpdateTime(maxTime);
@@ -119,12 +125,14 @@ public class GameManager : MonoBehaviour
         while (!isGameOver)
         {
             yield return new WaitForSeconds(1);
+
+            UpdateTime();
             if (isGameOver )
             {
                 break;
             }
 
-            UpdateTime();
+            
             
 
         }
@@ -133,7 +141,23 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown("escape"))
+        {
+            if(!isPause)
+            {
+                //Time.timeScale = 0;
+                isPause = true;
+                uiManager.ShowPausePanel();
 
+            }
+            else if (isPause)
+            {
+                //Time.timeScale = 1;
+                isPause = false;
+                uiManager.HidePausePanel();
+            }
+            
+        }
         
         
     }
@@ -151,7 +175,7 @@ public class GameManager : MonoBehaviour
     {
         time--;
         uiManager.UpdateTime(time);
-        if (time <= 0)
+        if (time <= 0 || lives <= 0)
         {
 
 
@@ -180,9 +204,18 @@ public class GameManager : MonoBehaviour
         return isGameOver;
     }
 
+    public bool IsPause()
+    {
+        return isPause;
+    }
+
     public void LoseLife()
     {
         lives--;
+        if (lives <= 0)
+        {
+            isGameOver = true;
+        }
     }
 
 
@@ -192,6 +225,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Challenge 5");
     }
 
+    public void NotPause()
+    {
+        isPause = false;
+    }
 
 
 
